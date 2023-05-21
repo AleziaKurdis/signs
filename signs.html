@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<!--
+    signs.html
+
+    Created by Alezia Kurdis, May 11th, 2023.
+    Copyright 2023, Overte e.V.
+
+    Create signs (for signalitic or for protest) in Overte. UI.
+
+    Distributed under the Apache License, Version 2.0.
+    See the accompanying file LICENSE or http://www.apache.org/licenses/LICENSE-2.0.html
+-->
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <script>
+            var channel = "org.overte.app.ak.signs";
+
+            //Paths
+            var thisPageName = "signs.html";
+            var currentPath = window.location.protocol + "//" + window.location.host + window.location.pathname;
+            var ROOTPATH = currentPath.replace(thisPageName, "");
+
+            var canRez = false;
+            var canRezAvatarEntities = false;
+            var uiData = {};
+            var modelShape = "S";
+            
+            EventBridge.scriptEventReceived.connect(function(message){
+                messageObj = JSON.parse(message);
+                if (messageObj.channel === channel) {
+                    if (messageObj.action === "INITIAL_DATA") {
+                        canRez = messageObj.canRez; 
+                        canRezAvatarEntities = messageObj.canRezAvatarEntities;
+                        uiData = messageObj.data;
+                        initiateUi();
+                    }
+                    if (messageObj.action === "AVATAR_ENTITY_STATE") {
+                        avatarEntityBtnManager(messageObj.state);
+                    }
+                }
+            });
+            
+            //======== Add your receievd Action functions here================
+            function avatarEntityBtnManager(state) {
+                if (state) {
+                    document.getElementById("protestGenerate").style.display = "none";
+                    document.getElementById("protestClear").style.display = "block";
+                } else {
+                    document.getElementById("protestGenerate").style.display = "block";
+                    document.getElementById("protestClear").style.display = "none";
+                }
+            }
+            
+            function initiateUi() {
+                if (canRez) {
+                    document.getElementById("signageGenerate").disabled = false;
+                    document.getElementById("framedGenerate").disabled = false;
+                    document.getElementById("framedEmissiveGenerate").disabled = false;
+                } else {
+                    document.getElementById("signageGenerate").disabled = true;
+                    document.getElementById("framedGenerate").disabled = true;
+                    document.getElementById("framedEmissiveGenerate").disabled = true;
+                }
+                if (canRezAvatarEntities) {
+                    document.getElementById("protestGenerate").disabled = false;
+                    document.getElementById("protestClear").disabled = false;
+                } else {
+                    document.getElementById("protestGenerate").disabled = true;
+                    document.getElementById("protestClear").disabled = true;
+                }
+                document.getElementById("url").value = uiData.url;
+                computeImage(uiData.url);
+            }
+            //===============================================================
+
+        </script>
+        <style>
+            @font-face {
+                font-family: FiraSans-SemiBold;
+                src: url(fonts/FiraSans-SemiBold.ttf);
+            }
+
+            @font-face {
+                font-family: FiraSans-Regular;
+                src: url(fonts/FiraSans-Regular.ttf);
+            }
+
+            html {
+                width: 100%;
+                height: 100%;
+                padding: 0px;
+            }
+
+            body {
+                background: #454545;
+                font-family: FiraSans-Regular;
+                font-size: 12px;
+                color: #FFFFFF;
+                text-decoration: none;
+                font-style: normal;
+                font-variant: normal;
+                text-transform: none;
+                padding: 0px;
+            }
+            div.twoColumns {
+                width: 98%;
+                display: flex;
+                padding: 0px;
+            }
+            
+            div.cel1 {
+                width: 35%;
+                font-size: 18px;
+                font-family: FiraSans-SemiBold;
+            }
+            
+            div.cel2 {
+                width: 65%;
+                text-align: right;
+            }
+            
+            #previewUrlcontainer {
+                width: 98%;
+                display: flex;
+                padding: 0px;
+            }
+            
+            #originalFrame {
+                width: 60%;
+                padding: 10px;
+            }
+            
+            #previewFrame {
+                width: 40%;
+                padding: 10px;
+            }
+            
+            #urlFrame {
+                width: 99%;
+                padding: 6px;
+                display: flex;
+            }
+            #urlcontainer {
+                width: 80%;
+            }
+            #url {
+                width: 100%;
+                outline: none;
+            }
+            
+            #bookmark_name {
+                border: 1px solid #888888;
+                background-color: transparent;
+                color: #ffffff;
+                outline: none;
+            }
+
+            #bookmark_name:disabled {
+                color: #888888;
+            }
+            
+            #bookmarkLabel {
+                font-family: FiraSans-SemiBold;
+                color: #888888;
+            }
+            
+            button.right {
+                float: right;
+            }
+            
+            button.create {
+                font-family: FiraSans-SemiBold;
+                background-color: #035aab;
+                font-size: 12px;
+                color: #eeeeee;
+                border-radius: 3px;
+                border: 0px solid #000000;
+                transition-duration: 0.2s;
+                width: 140px;
+                padding: 3px;
+                box-shadow: 1px 1px 4px 2px rgba(0,0,0,.6);
+            }
+
+            button.create:hover {
+                background-color: #1e96d6;
+                color: #ffffff;
+            }
+
+            button.create:focus {
+                outline: none;
+            }
+
+            button.create:disabled {
+                background-color: #575757;
+                color: #aaaaaa;
+            }
+
+            button.delete {
+                font-family: FiraSans-SemiBold;
+                background-color: #8a0b0b;
+                font-size: 12px;
+                color: #eeeeee;
+                border-radius: 3px;
+                border: 0px solid #000000;
+                transition-duration: 0.2s;
+                width: 140px;
+                padding: 3px;
+                box-shadow: 1px 1px 4px 2px rgba(0,0,0,.6);
+            }
+
+            button.delete:hover {
+                background-color: #d95d30;
+                color: #ffffff;
+            }
+
+            button.delete:focus {
+                outline: none;
+            }
+
+            button.delete:disabled {
+                background-color: #575757;
+                color: #aaaaaa;
+            }
+
+            
+            #uninstall {
+                font-family: FiraSans-SemiBold;
+                background-color: #222222;
+                font-size: 9px;
+                color: #cccccc;
+                border-radius: 3px;
+                border: 0px solid #000000;
+                transition-duration: 0.2s;
+                width: 100px;
+                padding: 3px;
+            }
+
+            #uninstall:hover {
+                background-color: #000000;
+                color: #ffffff;
+            }
+
+            #uninstall:focus {
+                outline: none;
+            }
+            
+            #pinUrl {
+                font-family: FiraSans-SemiBold;
+                background-color: #222222;
+                font-size: 9px;
+                color: #cccccc;
+                border-radius: 3px;
+                border: 0px solid #000000;
+                transition-duration: 0.2s;
+                width: 50px;
+                padding: 3px;
+            }
+
+            #pinUrl:hover {
+                background-color: #000000;
+                color: #ffffff;
+            }
+
+            #pinUrl:focus {
+                outline: none;
+            }
+            
+            #pinUrl:disabled {
+                background-color: #858585;
+                color: #aaaaaa;
+            }
+            
+            #history {
+                width: 430px;
+                height: 560px;
+                background-color: #cccccc;
+                display: none;
+                position: absolute;
+                box-shadow: 1px 1px 4px 2px rgba(0,0,0,0.6);
+                z-index: 4;
+                overflow-x: hidden;
+                overflow-y: auto;
+            }
+            
+            #closemenu {
+                width: 95%;
+                height: 95%;
+                background-color: transparent;
+                display: none;
+                position: absolute;
+                z-index: 2;
+                overflow: hidden;
+            }
+            
+            button.menuItemBtn {
+                font-family: FiraSans-SemiBold;
+                background-color: transparent;
+                font-size: 13px;
+                color: #222222;
+                border-width: 0px;
+                transition-duration: 0.2s;
+                width: 90%;
+                padding: 3px;
+                text-align: left;
+                margin: 1px;
+            }
+
+            button.menuItemBtn:hover {
+                background-color: #000000;
+                color: #ffffff;
+            }
+
+            button.menuItemBtn:focus {
+                outline: none;
+            }
+ 
+            button.menuItemBtnDelete {
+                font-family: FiraSans-SemiBold;
+                background-color: transparent;
+                font-size: 13px;
+                color: #222222;
+                border-width: 0px;
+                transition-duration: 0.2s;
+                width: 8%;
+                padding: 3px;
+                text-align: center;
+                margin: 1px;
+            }
+
+            button.menuItemBtnDelete:hover {
+                background-color: #000000;
+                color: #ffffff;
+            }
+
+            button.menuItemBtnDelete:focus {
+                outline: none;
+            }
+            
+            div.menuItemContainer {
+                width: 85%;
+                margin: 0px;
+                background-color: #aaaaaa;
+                border-style: solid;
+                border-width: 0px 0px 2px 0px;
+                border-color: #000000;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="closemenu" onClick="hideBookmark();"></div>
+        <!-- Your UI here---->
+        <div style="width: 100%; height: 650px;">
+        <h1>CUSTOM SIGNS GENERATOR</h1>
+        Create a customized sign from any image url (.jpg or .png).<br>
+        The nearest ratio will be used among: 1:1, 16:9 or 9:16.<br><br>
+        <div id="urlFrame">URL:&nbsp; <div id="urlcontainer"><input type="text" id = "url" onkeyUp="computeImage(this.value);"><div id = "history"></div></div><button id="bookmarks" onClick="showBookmark();">&#9660;</button></div>
+        <div><font id="bookmarkLabel">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Name: </font><input id="bookmark_name" type="text" value="">
+            <button id="pinUrl" onClick = "saveBookmark();">Save URL</button></div>
+        <div id="previewUrlcontainer">
+            <div id="originalFrame">Original:<br><img id="preview" style = "height:100px" onload="imgSize(this);"></div>
+            <div id="previewFrame">Preview:<br><img id="signPreview" style = "height:100px"></div>
+        </div>
+        
+        <hr>
+        
+            <div id = "signagePanel">
+                <div class="twoColumns">
+                    <div class="cel1">Street Sign</div>
+                    <div class="cel2"><button id="signageGenerate" class="create" onClick="generateSignage();">Create</button></div>
+                </div>
+                Metal Street Sign for indications.<br>(Persistent domain entity)<br>
+                
+            </div>
+            <hr>
+            <div id = "protestPanel">
+                <div class="twoColumns">
+                    <div class="cel1">Protest Sign</div>
+                    <div class="cel2">
+                        <button id="protestGenerate" class="create right" onClick="generateProtest();">Create</button>
+                        <button id="protestClear" class="delete right" onClick="clearProtest();" >Delete</button>
+                    </div>
+                </div>
+                Wooden protest sign.<br>(Non persistent avatar entity)<br>
+            </div>
+            <hr>
+            <div id = "framedPanel">
+                <div class="twoColumns">
+                    <div class="cel1">Wall Framed Sign</div>
+                    <div class="cel2">
+                        <button id="framedGenerate" class="create" onClick="generateFramedSign(false);">Create</button>&nbsp;&nbsp;&nbsp;
+                        <button id="framedEmissiveGenerate" class="create" onClick="generateFramedSign(true);">Create (emissive)</button>
+                    </div>
+                </div>                
+                Wall sign, metal frame.<br>(Persistent domain entity)<br>
+            </div>
+        </div>
+        <div style="text-align: right; width:100%;">
+            <button id="uninstall" onClick = "uninstall();">Uninstall this app</button>
+        </div>
+        <script>
+            //UI functions here
+            function computeImage(imageUrl) {
+                var preview = document.getElementById("preview");
+                preview.src = imageUrl;
+                setBookmarkName(imageUrl);
+            }
+
+            function imgSize(imgObject){
+                var ratio = imgObject.width/imgObject.height;
+                modelShape = "S";
+                var previewWidth = 100;
+                if (ratio > 1.4 ) {
+                    modelShape = "H";
+                    previewWidth = 178;
+                } else if (ratio < 0.7) {
+                    modelShape = "V";
+                    previewWidth = 56;
+                } 
+                
+                var signPreview = document.getElementById("signPreview");
+                signPreview.src = imgObject.src;
+                signPreview.width = previewWidth;
+                
+            }
+
+
+            //UI Action function here
+            
+            function saveBookmark() {
+                var name = document.getElementById("bookmark_name").value;
+                if (name.length > 80) {
+                    name = name.substr(0,80) + "...";
+                }                
+                var url = document.getElementById("url").value;
+                if (!isBookmarkKnown(name)) {
+                    var bookmark = {
+                        "name": name,
+                        "url": url
+                    };
+                    uiData.urlHistory.push(bookmark);
+                }
+                updateData();
+                setBookmarkName(uiData.url);
+            }
+
+            function isBookmarkKnown(name) {
+                var known = false;
+                if (uiData.urlHistory.length > 0) {
+                    for (var i = 0; i < uiData.urlHistory.length; i++) {
+                        if (uiData.urlHistory[i].name === name) {
+                            known = true;
+                            break;
+                        }
+                    }
+                }
+                return known;
+            }
+            
+            function setBookmarkName(imageUrl) {
+                var name = "";
+                if (uiData.urlHistory.length > 0) {
+                    for (var i = 0; i < uiData.urlHistory.length; i++) {
+                        if (uiData.urlHistory[i].url === imageUrl) {
+                            name = uiData.urlHistory[i].name;
+                            break;
+                        }
+                    }
+                }
+                if (name === "") {
+                    var filename = imageUrl.substring(imageUrl.lastIndexOf('/')+1);
+                    name = filename;
+                    document.getElementById("pinUrl").disabled = false;
+                    document.getElementById("bookmark_name").disabled = false;
+                    document.getElementById("bookmark_name").readOnly = false;
+                } else {
+                    document.getElementById("pinUrl").disabled = true;
+                    document.getElementById("bookmark_name").disabled = true;
+                    document.getElementById("bookmark_name").readOnly = true;
+                }
+                if (name.length > 80) {
+                    name = name.substr(0,80) + "...";
+                }
+                document.getElementById("bookmark_name").value = name;
+            }
+            
+            function generateFramedSign(isEmissive) {
+                var message = {
+                    "channel": channel,
+                    "action": "GENERATE_FRAMED",
+                    "url": document.getElementById("url").value,
+                    "shape": modelShape,
+                    "isEmissive": isEmissive
+                };
+                EventBridge.emitWebEvent(JSON.stringify(message));
+                updateData();
+            }
+            
+            function generateSignage() {
+                var message = {
+                    "channel": channel,
+                    "action": "GENERATE_SIGNAGE",
+                    "url": document.getElementById("url").value,
+                    "shape": modelShape
+                };
+                EventBridge.emitWebEvent(JSON.stringify(message));
+                updateData();
+            }
+
+            function generateProtest() {
+                var message = {
+                    "channel": channel,
+                    "action": "GENERATE_PROTEST",
+                    "url": document.getElementById("url").value,
+                    "shape": modelShape
+                };
+                EventBridge.emitWebEvent(JSON.stringify(message));
+                updateData();
+            }
+            
+            function clearProtest() {
+                var message = {
+                    "channel": channel,
+                    "action": "CLEAR_PROTEST"
+                };
+                EventBridge.emitWebEvent(JSON.stringify(message));
+                updateData();
+            }
+            
+            function updateData() {
+                uiData.url = document.getElementById("url").value;
+                var message = {
+                    "channel": channel,
+                    "action": "UPDATE_DATA",
+                    "data": uiData
+                };
+                EventBridge.emitWebEvent(JSON.stringify(message));
+            }
+            
+            function getInitialData() {
+                var message = {
+                    "channel": channel,
+                    "action": "LOADED_GIVE_ME_THE_DATA"
+                };
+                EventBridge.emitWebEvent(JSON.stringify(message));
+            }
+            
+            function showBookmark() {
+                
+                document.getElementById("closemenu").style.display = "block";
+                document.getElementById("history").style.display = "block";
+                
+                //call generate menu
+                generateBookmarkMenu();
+            }
+
+            function generateBookmarkMenu() {
+                var btnlist = "";
+                if (uiData.urlHistory.length > 0) {
+                    for (var i = 0; i < uiData.urlHistory.length; i++) {
+                        btnlist = btnlist + "<div class ='menuItemContainer'><button class = 'menuItemBtn' onClick='setUrlFromBookmark(" + i + ");'>" + uiData.urlHistory[i].name + "</button>";
+                        btnlist = btnlist + "<button class = 'menuItemBtnDelete' onClick='deleteBookmark(" + i + ");'>&#128937;</button></div>";
+                    }
+                    document.getElementById("history").innerHTML = btnlist;
+                } else {
+                     hideBookmark();
+                     setBookmarkName(uiData.url);
+                }
+            }
+
+            function setUrlFromBookmark(no) {
+                uiData.url = uiData.urlHistory[no].url;
+                document.getElementById("url").value = uiData.url;
+                computeImage(uiData.url);
+                hideBookmark();
+            }
+            
+            function deleteBookmark(no) {
+                uiData.urlHistory.splice(no, 1);
+                updateData();
+                generateBookmarkMenu();
+            }
+
+            function hideBookmark() {
+                document.getElementById("closemenu").style.display = "none";
+                document.getElementById("history").style.display = "none";
+            }
+            
+            
+            function uninstall() { 
+                var message = {
+                    "channel": channel,
+                    "action": "SELF_UNINSTALL"
+                };
+                EventBridge.emitWebEvent(JSON.stringify(message));
+            }
+            
+            getInitialData();
+        </script>
+    </body>
+</html>
