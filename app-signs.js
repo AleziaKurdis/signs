@@ -342,7 +342,7 @@
                 break;
         }
         
-        var signRotation = Quat.multiply(MyAvatar.orientation, Quat.fromVec3Degrees( { x: 0, y: 180, z: 0 } ));
+        var signRotation = Quat.multiply(MyAvatar.orientation, Quat.fromVec3Degrees( { x: 0, y: 0, z: 0 } ));
         
         var id = Entities.addEntity({
            "name": "Framed Sign - ",
