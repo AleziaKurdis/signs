@@ -137,7 +137,7 @@
             "base_color_texture": url
         };
 
-        var dimensions = {"x": 0.1006, "y": 0.1227, "z": 0.1408};
+        var dimensions = {"x": 0.1006, "y": 0.1190, "z": 0.1408};
 
         var signRotation = Quat.multiply(MyAvatar.orientation, Quat.fromVec3Degrees( { x: 0, y: 0, z: 0 } ));
         
