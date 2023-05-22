@@ -36,19 +36,27 @@
                         initiateUi();
                     }
                     if (messageObj.action === "AVATAR_ENTITY_STATE") {
-                        avatarEntityBtnManager(messageObj.state);
+                        avatarEntityBtnManager(messageObj.state, messageObj.stateMug);
                     }
                 }
             });
             
             //======== Add your receievd Action functions here================
-            function avatarEntityBtnManager(state) {
+            function avatarEntityBtnManager(state, stateMug) {
                 if (state) {
                     document.getElementById("protestGenerate").style.display = "none";
                     document.getElementById("protestClear").style.display = "block";
                 } else {
                     document.getElementById("protestGenerate").style.display = "block";
                     document.getElementById("protestClear").style.display = "none";
+                }
+
+                if (stateMug) {
+                    document.getElementById("mugBtnContainer").style.display = "none";
+                    document.getElementById("mugClear").style.display = "block";
+                } else {
+                    document.getElementById("mugBtnContainer").style.display = "block";
+                    document.getElementById("mugClear").style.display = "none";
                 }
             }
             
@@ -65,9 +73,15 @@
                 if (canRezAvatarEntities) {
                     document.getElementById("protestGenerate").disabled = false;
                     document.getElementById("protestClear").disabled = false;
+                    document.getElementById("mugGenerate").disabled = false;
+                    document.getElementById("mugGenerateB").disabled = false;
+                    document.getElementById("mugClear").disabled = false; 
                 } else {
                     document.getElementById("protestGenerate").disabled = true;
                     document.getElementById("protestClear").disabled = true;
+                    document.getElementById("mugGenerate").disabled = true;
+                    document.getElementById("mugGenerateB").disabled = true;
+                    document.getElementById("mugClear").disabled = true;
                 }
                 document.getElementById("url").value = uiData.url;
                 computeImage(uiData.url);
@@ -395,6 +409,20 @@
                 </div>                
                 Wall sign, metal frame.<br>(Persistent domain entity)<br>
             </div>
+            <hr>
+            <div id = "mugPanel">
+                <div class="twoColumns">
+                    <div class="cel1">Customized Mug</div>
+                    <div class="cel2">
+                        <div id="mugBtnContainer" style="display: flex;">
+                            <button id="mugGenerate" class="create" onClick="generateMug('WHITE');">Create (White)</button>&nbsp;&nbsp;&nbsp;
+                            <button id="mugGenerateB" class="create" onClick="generateMug('BLACK');">Create (Black)</button>
+                        </div>
+                        <button id="mugClear" class="delete right" onClick="clearMug();" >Delete</button>
+                    </div>
+                </div>
+                Ceramic coffee mug.<br>(Non persistent avatar entity)<br>
+            </div>
         </div>
         <div style="text-align: right; width:100%;">
             <button id="uninstall" onClick = "uninstall();">Uninstall this app</button>
@@ -523,6 +551,27 @@
                 var message = {
                     "channel": channel,
                     "action": "CLEAR_PROTEST"
+                };
+                EventBridge.emitWebEvent(JSON.stringify(message));
+                updateData();
+            }
+
+            function generateMug(color) {
+                var message = {
+                    "channel": channel,
+                    "action": "GENERATE_MUG",
+                    "url": document.getElementById("url").value,
+                    "shape": modelShape,
+                    "color": color
+                };
+                EventBridge.emitWebEvent(JSON.stringify(message));
+                updateData();
+            }
+
+            function clearMug() {
+                var message = {
+                    "channel": channel,
+                    "action": "CLEAR_MUG"
                 };
                 EventBridge.emitWebEvent(JSON.stringify(message));
                 updateData();

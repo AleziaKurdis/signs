@@ -27,7 +27,8 @@
         "urlHistory": []
     };
     
-    protestSignID = Uuid.NULL;
+    var protestSignID = Uuid.NULL;
+    var mugSignID = Uuid.NULL;
     
     var tablet = Tablet.getTablet("com.highfidelity.interface.tablet.system");
 
@@ -52,7 +53,7 @@
             appStatus = true;
         }
         
-        if (protestSignID === Uuid.NULL) {
+        if (protestSignID === Uuid.NULL && mugSignID === Uuid.NULL) {
             button.editProperties({
                 isActive: appStatus
             });
@@ -77,6 +78,10 @@
                     d = new Date();
                     timestamp = d.getTime();
                     generateProtestSign(instruction.url, instruction.shape);
+                } else if (instruction.action === "GENERATE_MUG" && (n - timestamp) > INTERCALL_DELAY) {
+                    d = new Date();
+                    timestamp = d.getTime();
+                    generateMug(instruction.url, instruction.shape, instruction.color);
                 } else if (instruction.action === "GENERATE_SIGNAGE" && (n - timestamp) > INTERCALL_DELAY) {
                     d = new Date();
                     timestamp = d.getTime();
@@ -89,14 +94,21 @@
                     d = new Date();
                     timestamp = d.getTime();
                     clearProtest();
+                } else if (instruction.action === "CLEAR_MUG" && (n - timestamp) > INTERCALL_DELAY) {
+                    d = new Date();
+                    timestamp = d.getTime();
+                    clearMug();
                 } else if (instruction.action === "LOADED_GIVE_ME_THE_DATA") {
                     sendCurrentKnownDataToUI();
                     var state = false;
                     if (protestSignID !== Uuid.NULL) {state = true;}
+                    var stateMug = false;
+                    if (mugSignID !== Uuid.NULL) {stateMug = true;}
                     var message = {
                         "channel": channel,
                         "action": "AVATAR_ENTITY_STATE",
-                        "state": state
+                        "state": state,
+                        "stateMug": stateMug
                     };
                     tablet.emitScriptEvent(JSON.stringify(message));
                 } else if (instruction.action === "UPDATE_DATA") {
@@ -111,6 +123,59 @@
     }
 
     //============ Add your application functions here ==================
+    
+    function generateMug(url, shape, color) {
+        var entityIDs = Entities.findEntitiesByName("-==%%! MUG !%%==-", MyAvatar.position, 200, false);
+        entityIDs.forEach(function (currentEntityID) {
+            var currentEntityOwner = Entities.getEntityProperties(currentEntityID, ['owningAvatarID']).owningAvatarID;
+            if (currentEntityOwner === MyAvatar.sessionUUID && currentEntityID !== mugSignID) {
+                Entities.deleteEntity(currentEntityID);
+            }
+        });
+
+        var textures = {
+            "base_color_texture": url
+        };
+
+        var dimensions = {"x": 0.0860, "y": 0.1003, "z": 0.1203};
+
+        var signRotation = Quat.multiply(MyAvatar.orientation, Quat.fromVec3Degrees( { x: 0, y: 0, z: 0 } ));
+        
+        if (mugSignID !== Uuid.NULL) {
+            Entities.deleteEntity(mugSignID);
+            mugSignID = Uuid.NULL;
+        }
+        
+        mugSignID = Entities.addEntity({
+           "name": "-==%%! MUG !%%==-",
+           "type": "Model",
+           "position": Vec3.sum(MyAvatar.position, Vec3.multiplyQbyV(MyAvatar.orientation, { x: 0, y: 0, z: -1 })),
+           "rotation": signRotation,
+           "dimensions": dimensions,
+           "modelURL": ROOT + "models/mug_" + color + "_" + shape.toLowerCase() + ".fst",
+           "useOriginalPivot": true,
+           "shapeType": "simple-compound",
+           "grab": {
+               "grabbable": true
+           },
+           "textures": JSON.stringify(textures),
+           "lifetime": 10800
+        }, "avatar");
+        
+        var state = false;
+        if (protestSignID !== Uuid.NULL) {
+            state = true;
+        }         
+        var message = {
+            "channel": channel,
+            "action": "AVATAR_ENTITY_STATE",
+            "state": state,
+            "stateMug": true
+        };
+        tablet.emitScriptEvent(JSON.stringify(message));
+    }
+
+    
     function generateProtestSign(url, shape) {
         var entityIDs = Entities.findEntitiesByName("-==%%! Protest Sign !%%==-", MyAvatar.position, 200, false);
         entityIDs.forEach(function (currentEntityID) {
@@ -159,11 +224,17 @@
            "textures": JSON.stringify(textures),
            "lifetime": 10800
         }, "avatar");
+
+        var stateMug = false;
+        if (mugSignID !== Uuid.NULL) {
+            stateMug = true;
+        } 
         
         var message = {
             "channel": channel,
             "action": "AVATAR_ENTITY_STATE",
-            "state": true
+            "state": true,
+            "stateMug": stateMug
         };
         tablet.emitScriptEvent(JSON.stringify(message));
     }
@@ -173,10 +244,34 @@
             Entities.deleteEntity(protestSignID);
             protestSignID = Uuid.NULL;
         }
+        var stateMug = false;
+        if (mugSignID !== Uuid.NULL) {
+            stateMug = true;
+        }        
         var message = {
             "channel": channel,
             "action": "AVATAR_ENTITY_STATE",
-            "state": false
+            "state": false,
+            "stateMug": stateMug
+        };
+        tablet.emitScriptEvent(JSON.stringify(message));
+    }
+
+    function clearMug() {
+        if (mugSignID !== Uuid.NULL) {
+            Entities.deleteEntity(mugSignID);
+            mugSignID = Uuid.NULL;
+        }
+        var stateProtest = false;
+        if (protestSignID !== Uuid.NULL) {
+            stateProtest = true;
+        }
+        
+        var message = {
+            "channel": channel,
+            "action": "AVATAR_ENTITY_STATE",
+            "state": stateProtest,
+            "stateMug": false
         };
         tablet.emitScriptEvent(JSON.stringify(message));
     }
@@ -286,7 +381,7 @@
             appStatus = false;
         }
 
-        if (protestSignID === Uuid.NULL) {
+        if (protestSignID === Uuid.NULL && mugSignID === Uuid.NULL) {
             button.editProperties({
                 isActive: appStatus
             });
@@ -301,6 +396,11 @@
         if (protestSignID !== Uuid.NULL) {
             Entities.deleteEntity(protestSignID);
             protestSignID = Uuid.NULL;
+        }
+
+        if (mugSignID !== Uuid.NULL) {
+            Entities.deleteEntity(mugSignID);
+            mugSignID = Uuid.NULL;
         }
         
         if (appStatus) {
