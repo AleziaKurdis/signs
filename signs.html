@@ -368,7 +368,7 @@
         <h1>CUSTOM SIGNS GENERATOR</h1>
         Create a customized sign from any image url (.jpg or .png).<br>
         The nearest ratio will be used among: 1:1, 16:9 or 9:16.<br><br>
-        <div id="urlFrame">URL:&nbsp; <div id="urlcontainer"><input type="text" id = "url" onkeyUp="computeImage(this.value);"><div id = "history"></div></div><button id="bookmarks" onClick="showBookmark();">&#9660;</button></div>
+        <div id="urlFrame">URL:&nbsp; <div id="urlcontainer"><input type="text" id = "url" onkeyUp="computeImage(this.value);" onpaste="computeImage(this.value);"><div id = "history"></div></div><button id="bookmarks" onClick="showBookmark();">&#9660;</button></div>
         <div><font id="bookmarkLabel">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Name: </font><input id="bookmark_name" type="text" value="">
             <button id="pinUrl" onClick = "saveBookmark();">Save URL</button></div>
