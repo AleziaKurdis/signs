@@ -149,7 +149,7 @@
         mugSignID = Entities.addEntity({
            "name": "-==%%! MUG !%%==-",
            "type": "Model",
-           "position": Vec3.sum(MyAvatar.position, Vec3.multiplyQbyV(MyAvatar.orientation, { x: 0, y: 0, z: -1 })),
+           "position": Vec3.sum(MyAvatar.position, Vec3.multiplyQbyV(MyAvatar.orientation, { x: 0, y: 0, z: -0.6 })),
            "rotation": signRotation,
            "dimensions": dimensions,
            "modelURL": ROOT + "models/mug_" + color + "_" + shape.toLowerCase() + ".fst",
