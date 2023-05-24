@@ -44,19 +44,19 @@
             //======== Add your receievd Action functions here================
             function avatarEntityBtnManager(state, stateMug) {
                 if (state) {
-                    document.getElementById("protestGenerate").style.display = "none";
-                    document.getElementById("protestClear").style.display = "block";
+                    //document.getElementById("protestGenerate").style.display = "none";
+                    document.getElementById("protestClear").disabled = false;
                 } else {
-                    document.getElementById("protestGenerate").style.display = "block";
-                    document.getElementById("protestClear").style.display = "none";
+                    //document.getElementById("protestGenerate").style.display = "block";
+                    document.getElementById("protestClear").disabled = true;
                 }
 
                 if (stateMug) {
-                    document.getElementById("mugBtnContainer").style.display = "none";
-                    document.getElementById("mugClear").style.display = "block";
+                    //document.getElementById("mugBtnContainer").style.display = "none";
+                    document.getElementById("mugClear").disabled = false;
                 } else {
-                    document.getElementById("mugBtnContainer").style.display = "block";
-                    document.getElementById("mugClear").style.display = "none";
+                    //document.getElementById("mugBtnContainer").style.display = "block";
+                    document.getElementById("mugClear").disabled = true;
                 }
             }
             
