@@ -136,8 +136,10 @@
         var textures = {
             "base_color_texture": url
         };
+        
+        var avatarScaleFactor = MyAvatar.scale;
 
-        var dimensions = {"x": 0.1006, "y": 0.1190, "z": 0.1408};
+        var dimensions = Vec3.multiply(avatarScaleFactor, {"x": 0.1006, "y": 0.1190, "z": 0.1408});
 
         var signRotation = Quat.multiply(MyAvatar.orientation, Quat.fromVec3Degrees( { x: 0, y: 0, z: 0 } ));
         
@@ -149,7 +151,7 @@
         mugSignID = Entities.addEntity({
            "name": "-==%%! MUG !%%==-",
            "type": "Model",
-           "position": Vec3.sum(MyAvatar.position, Vec3.multiplyQbyV(MyAvatar.orientation, { x: 0, y: 0, z: -0.6 })),
+           "position": Vec3.sum(MyAvatar.position, Vec3.multiplyQbyV(MyAvatar.orientation, { x: 0, y: 0, z: -0.6 * avatarScaleFactor })),
            "rotation": signRotation,
            "dimensions": dimensions,
            "modelURL": ROOT + "models/mug_" + color + "_" + shape.toLowerCase() + ".fst",
@@ -202,6 +204,9 @@
                 dimensions = {"x": 0.3997, "y": 1.2364, "z": 0.0273};
                 break;
         }
+        var avatarScaleFactor = MyAvatar.scale;
+        dimensions = Vec3.multiply(avatarScaleFactor, dimensions);
+        
         var signRotation = Quat.multiply(MyAvatar.orientation, Quat.fromVec3Degrees( { x: 90, y: 180, z: 0 } ));
         
         if (protestSignID !== Uuid.NULL) {
@@ -212,7 +217,7 @@
         protestSignID = Entities.addEntity({
            "name": "-==%%! Protest Sign !%%==-",
            "type": "Model",
-           "position": Vec3.sum(MyAvatar.position, Vec3.multiplyQbyV(MyAvatar.orientation, { x: 0, y: 0, z: -1 })),
+           "position": Vec3.sum(MyAvatar.position, Vec3.multiplyQbyV(MyAvatar.orientation, { x: 0, y: 0, z: -1 * avatarScaleFactor })),
            "rotation": signRotation,
            "dimensions": dimensions,
            "modelURL": ROOT + "models/protest_sign_" + shape.toLowerCase() + ".fst",

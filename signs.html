@@ -134,6 +134,15 @@
                 text-align: right;
             }
             
+            div.entity {
+                width: 60%;
+            }
+            
+            div.del {
+                width: 40%;
+                text-align: right;
+            }
+            
             #previewUrlcontainer {
                 width: 98%;
                 display: flex;
@@ -224,7 +233,7 @@
             }
 
             button.delete:hover {
-                background-color: #d95d30;
+                background-color: #d94930;
                 color: #ffffff;
             }
 
@@ -359,6 +368,14 @@
                 border-width: 0px 0px 2px 0px;
                 border-color: #000000;
             }
+            
+            font.domain {
+                color: #4fa1ff;
+            }
+            
+            font.avatar {
+                color: #ffd94f;
+            }            
         </style>
     </head>
     <body>
@@ -384,7 +401,7 @@
                     <div class="cel1">Street Sign</div>
                     <div class="cel2"><button id="signageGenerate" class="create" onClick="generateSignage();">Create</button></div>
                 </div>
-                Metal Street Sign for indications.<br>(Persistent domain entity)<br>
+                Metal Street Sign for indications.<br><font class="domain">(Persistent domain entity)</font><br>
                 
             </div>
             <hr>
@@ -393,10 +410,14 @@
                     <div class="cel1">Protest Sign</div>
                     <div class="cel2">
                         <button id="protestGenerate" class="create right" onClick="generateProtest();">Create</button>
-                        <button id="protestClear" class="delete right" onClick="clearProtest();" >Delete</button>
+                        <!--button id="protestClear" class="delete right" onClick="clearProtest();" >Delete</button-->
                     </div>
                 </div>
-                Wooden protest sign.<br>(Non persistent avatar entity)<br>
+                Wooden protest sign.<br>
+                <div class="twoColumns">
+                    <div class="entity"><font class="avatar">(Non persistent avatar entity)</font></div>
+                    <div class="del"><button id="protestClear" class="delete right" onClick="clearProtest();" >Delete</button></div>
+                </div>
             </div>
             <hr>
             <div id = "framedPanel">
@@ -407,7 +428,7 @@
                         <button id="framedEmissiveGenerate" class="create" onClick="generateFramedSign(true);">Create (emissive)</button>
                     </div>
                 </div>                
-                Wall sign, metal frame.<br>(Persistent domain entity)<br>
+                Wall sign, metal frame.<br><font class="domain">(Persistent domain entity)</font><br>
             </div>
             <hr>
             <div id = "mugPanel">
@@ -418,10 +439,14 @@
                             <button id="mugGenerate" class="create" onClick="generateMug('WHITE');">Create (White)</button>&nbsp;&nbsp;&nbsp;
                             <button id="mugGenerateB" class="create" onClick="generateMug('BLACK');">Create (Black)</button>
                         </div>
-                        <button id="mugClear" class="delete right" onClick="clearMug();" >Delete</button>
+                        <!--button id="mugClear" class="delete right" onClick="clearMug();" >Delete</button-->
                     </div>
                 </div>
-                Ceramic coffee mug.<br>(Non persistent avatar entity)<br>
+                Ceramic coffee mug.<br>
+                <div class="twoColumns">
+                    <div class="entity"><font class="avatar">(Non persistent avatar entity)</font></div>
+                    <div class="del"><button id="mugClear" class="delete right" onClick="clearMug();" >Delete</button></div>
+                </div>
             </div>
         </div>
         <div style="text-align: right; width:100%;">
